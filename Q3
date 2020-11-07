@@ -1,0 +1,86 @@
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+import bisect
+#
+# Complete the 'countCups' function below.
+#
+# The function is expected to return an INTEGER_ARRAY.
+# The function accepts following parameters:
+#  1. INTEGER n
+#  2. INTEGER_ARRAY balls
+#  3. 2D_INTEGER_ARRAY swaps
+#  4. 2D_INTEGER_ARRAY queries
+#
+
+def countCups(n, balls, swaps, queries):
+    # Write your code here
+    x = balls
+    result = [0] * len(queries)
+    print(result)
+    print(swaps)
+    for i,j in swaps:
+        index2= bisect.bisect_left(x,j)
+        index1 = bisect.bisect_left(x,i)
+        if index1 != len(x) and x[index1]== i :
+            if index2==len(x) or x[index2]!= j:
+                bisect.insort(x,j)
+                index = bisect.bisect_left(x,i)
+                del x[index]
+                print(i,j)
+        else:
+            if index2!= len(x) and x[index2]==j:
+                bisect.insort(x,i)
+                index = bisect.bisect_left(x,j)
+                del x[index]
+                print(i,j)
+    print(x)
+    i=0
+    #x=5,7
+    #q=4,8
+    #q=4,6
+    #q=5,5
+    for l,r in queries:
+        result[i] = bisect.bisect_right(x,r) - bisect.bisect_left(x,l)
+        i = i + 1
+        #if ball in range(i,j):
+                #ball= ball+1
+    return result
+
+    
+
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    first_multiple_input = input().rstrip().split()
+
+    n = int(first_multiple_input[0])
+
+    m = int(first_multiple_input[1])
+
+    s = int(first_multiple_input[2])
+
+    q = int(first_multiple_input[3])
+
+    balls = list(map(int, input().rstrip().split()))
+
+    swaps = []
+
+    for _ in range(s):
+        swaps.append(list(map(int, input().rstrip().split())))
+
+    query = []
+
+    for _ in range(q):
+        query.append(list(map(int, input().rstrip().split())))
+
+    result = countCups(n, balls, swaps, query)
+
+    fptr.write(' '.join(map(str, result)))
+    fptr.write('\n')
+
+    fptr.close()
