@@ -1,0 +1,147 @@
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+
+#
+# Complete the 'treeConstruction' function below.
+#
+# The function is expected to return a 2D_INTEGER_ARRAY.
+# The function accepts following parameters:
+#  1. INTEGER N
+#  2. LONG_INTEGER X
+#
+
+def treeConstruction(N, X):
+    # Write your code here
+    arr = [1] * (N)
+    #result = [[0] * 2] * (N - 1)
+    result = []
+    if (X < N - 1 or X > (N * N - 1)//2):
+        return [[-1 , -1]]
+    else:
+       
+        arr[0] = 0
+        #arr[1] = 0
+       
+        #while X > 0:
+        # Find the minimum level required for tree
+        # Max Sum of any level = (Y * (2N - 1) - Y^2)/ 2  ; (Say, "Y" is level and "N" is number of element)
+        # X = (Y * (2N - 1) - Y^2)/ 2 ; (Say, X is required sum)
+        # Y^2 + (1 - 2N) * Y + 2X = 0
+        # Minimum level = floor(valid solution of above equation)
+        a = 1
+        b = 1 - 2 * N
+        c = 2 * X
+        # calculate the discriminant
+        d = (b**2) - (4*a*c)
+        #print('{0} and {1} {2}'.format(a, b, c))
+
+        # find two solutions
+        sol1 = (-b-math.sqrt(d))/(2*a)
+        sol2 = (-b+math.sqrt(d))/(2*a)
+        sol1 = math.floor(sol1)
+        sol2 = math.floor(sol2)
+        if sol1 > 0:
+            if (sol2 < 0):
+                level = sol1
+            else:
+                if sol1 <= sol2:
+                    level = sol1
+        else:
+            if (sol2 > 0):
+                level = sol2
+        #print(level)
+       
+        #print('{0} and {1} {2}'.format(level, sol1,sol2))
+        #print(arr)
+        # arr = [0 1 1 1 .. ]
+        X = X - N + 1
+
+        # Initialize arr with level
+        # e.g. [0, 1 , 2, 3, ..,level, 1, 1, .., 1]
+        if (level > 1) :
+            for i in range(1, level):
+                arr[1 + i] = arr[1 + i] + i
+                X = X - i
+               
+            #print(X)
+            #print(arr)
+            #Initialize remaining elements in arr.
+            #e.g. [0, 1, 2, 3, .., level, level, level, .., level]
+            for j in range(1 + level, N):
+                X = X - arr[1 + level - 1] + arr[j]
+                arr[j] = arr[1 + level - 1]
+ 
+            #X = X - 1
+   
+            #print(X)
+            #print(arr)
+        #else:
+        #    X = X - N + 1
+
+        # Get final answer in arr by adding "1" in each element of arr starting from end
+        # e.g. [0, 1, 2, 3, .., level, level, level, ..]    
+        for j in range(1, N - 1 - level):
+            if (X == 0):
+                break
+            else:
+                arr[N - j] = arr[N - j] + 1
+                X = X -1
+
+#        for i in range(0, N - 2):
+#            for j in range(0, N - 2 - i):
+#                if (X == 0):
+#                    break
+#                arr[N - j] = arr[N - j] + 1
+#                X = X -1
+#            else:
+#                continue  # only executed if the inner loop did NOT break
+#            break
+        print(X)
+        print(arr)
+        a1 = 1
+        b1 = 2
+        id = 1
+       
+        # Print Tree
+        for i in range (0, N - 1):
+            #print(a)
+            #print(b)
+            #result[i][0] = a
+            #result[i][1] = b
+            result.append([a1, b1])
+            # If we are going to next level, initilize a1 with last id of arr.
+            if id < N - 1 and arr[id] != arr[id + 1] :
+                a1 = id + 1
+               
+            b1 = b1 + 1
+            id = id + 1
+            #print(result)
+           
+    #print(result)
+    return result
+
+    
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    T = int(input().strip())
+
+    for T_itr in range(T):
+        first_multiple_input = input().rstrip().split()
+
+        N = int(first_multiple_input[0])
+
+        X = int(first_multiple_input[1])
+
+        result = treeConstruction(N, X)
+
+        fptr.write('\n'.join([' '.join(map(str, x)) for x in result]))
+        fptr.write('\n')
+
+    fptr.close()
